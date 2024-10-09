@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Dashboard</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding-top: 20px;
+            position: fixed;
+            height: 100%;
+        }
+
+        .sidebar h2 {
+            color: #fff;
+            margin-left: 20px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .sidebar ul li {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #4CAF50;
+        }
+
+        .sidebar ul li i {
+            margin-right: 15px;
+        }
+
+        .sidebar ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .search-bar button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-bar button:hover {
+            background-color: #45a049;
+        }
+
+        .document-section h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .document-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .document-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 150px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .document-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .document-card i {
+            font-size: 2em;
+            color: #4CAF50;
+        }
+
+        .document-card p {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 645px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Email Generator using AI</h2>
+        <ul>
+            <li><i class="history-icon">📅</i> <a href="#">Version History</a></li>
+            <li><i class="trash-icon">🗑</i> <a href="#">Trash</a></li>
+            <li><i class="account-icon">👤</i> <a href="#">Account</a></li>
+            <li><i class="apps-icon">📤</i> <a href="{% url 'logout' %}">SignOut</a></li>
+
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="search-bar">
+            <input type="text" placeholder="Search...">
+            <button>Search</button>
+        </div>
+
+        <div class="document-section">
+            <h2>All documents</h2>
+            <div class="document-grid">
+                <div class="document-card">
+                    <i class="upload-icon">📄</i>
+                    <p>New Document</p>
+                    <button>Upload</button>
+                </div>
+                <div class="document-card">
+                    <p>Demo document</p>
+                    <p>23 issues</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Copyright © 2024
+    </footer>
+
+    <script>
+        document.getElementById('signout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Clear session storage or local storage depending on authentication method
+            sessionStorage.clear(); // Example for session storage
+            localStorage.removeItem('authToken'); // Example if using local storage for token
+
+            // Redirect to the login page or a confirmation page after logout
+            window.location.href = '/'; // Replace with your actual login page path
+        });
+    </script>
+
+</body>
+</html>
