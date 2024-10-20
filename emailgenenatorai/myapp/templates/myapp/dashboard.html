@@ -145,7 +145,7 @@
             <li><i class="history-icon">📅</i> <a href="#">Version History</a></li>
             <li><i class="trash-icon">🗑</i> <a href="#">Trash</a></li>
             <li><i class="account-icon">👤</i> <a href="#">Account</a></li>
-            <li><i class="apps-icon">📤</i> <a href="{% url 'logout' %}">SignOut</a></li>
+            <li><i class="apps-icon">📤</i> <a href="/logout/">SignOut</a></li>
 
         </ul>
     </div>
@@ -162,11 +162,9 @@
                 <div class="document-card">
                     <i class="upload-icon">📄</i>
                     <p>New Document</p>
-                    <button>Upload</button>
                 </div>
                 <div class="document-card">
                     <p>Demo document</p>
-                    <p>23 issues</p>
                 </div>
             </div>
         </div>
@@ -176,18 +174,6 @@
         Copyright © 2024
     </footer>
 
-    <script>
-        document.getElementById('signout-btn').addEventListener('click', function(e) {
-            e.preventDefault();
-
-            // Clear session storage or local storage depending on authentication method
-            sessionStorage.clear(); // Example for session storage
-            localStorage.removeItem('authToken'); // Example if using local storage for token
-
-            // Redirect to the login page or a confirmation page after logout
-            window.location.href = '/'; // Replace with your actual login page path
-        });
-    </script>
 
 </body>
 </html>

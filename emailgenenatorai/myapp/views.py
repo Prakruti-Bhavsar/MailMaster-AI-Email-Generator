@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import logout
 
-# Create your views here.
 def index(request):
     return render(request, 'myapp/index.html')
 
-# Handle user registration
+def dashboard(request):
+    return render(request, 'myapp/dashboard.html')
+
 def register_view(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -25,30 +26,29 @@ def register_view(request):
         user.save()
 
         messages.success(request, "Registration successful! You can now login.")
-        return redirect('/?login=true')
+        return redirect('/')
 
     return render(request, 'myapp/index.html')
 
 # Handle user login
 def login_view(request):
     if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = request.POST['username']
+        password = request.POST['password']
+        print(username, password)
 
-        user = authenticate(request, username=username, password=password)
-
+        user = authenticate(username=username, password=password)
+        print(password)
         if user is not None:
             login(request, user)
-            return redirect('dashboard')  # Redirect to home page after successful login
+            return redirect('/dashboard/')  # Redirect to home page after successful login
         else:
             messages.error(request, "Invalid username or password")
-            return redirect('index')
-
-    return render(request, 'myapp/dashboard.html')
+            return redirect('/')
 
 # Handle user logout
 def logout_view(request):
     # Django's logout function clears the session
     logout(request)
     # Redirect to the login page after logout
-    return redirect('index')  # Replace 'index' with your login page URL name
+    return redirect('/')  # Replace 'index' with your login page URL name
