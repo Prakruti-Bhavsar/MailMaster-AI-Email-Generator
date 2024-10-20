@@ -1,11 +1,20 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Email Writer</title>
-    {% load static %} 
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static '/css/style.css' %}">
+    <!-- Include Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Include Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <style>
         /* Modal styles */
         .modal {
@@ -79,6 +88,29 @@
             color: white;
             border: none;
         }
+        .active-form {
+            display: block;
+        }
+        .form-section > div {
+            display: none; /* Hide all forms by default */
+        }
+
+        .form-section > div.active-form {
+            display: block; /* Show the active form */
+        }
+    </style>
+    <style>
+        .select2-container--default .select2-selection--single {
+            height: 35px; 
+            display: flex;
+            /* align-items: center;  */
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            font-size: 16px;
+            line-height: 35px; 
+            align-items: end;
+        }
     </style>
 </head>
 <body>
@@ -89,21 +121,188 @@
         <nav class="nav-links">
             <a href="#">How it works</a>
             <a href="#">Features</a>
-            <button class="install-btn" id="openRegisterModal">Register</button> <!-- Register button -->
-            <button class="install-btn" id="openModalBtn">Sign in</button> <!-- Sign in button -->
+            <button class="install-btn-1" id="openRegisterModal">Register</button> <!-- Register button -->
+            <button class="install-btn-2" id="openModalBtn">Sign in</button> <!-- Sign in button -->
         </nav>
     </header>
     <main>
         <aside class="sidebar">
             <h3>AI Email Tools</h3>
             <ul>
-                <li><a href="#">Subject Line Generator</a></li>
-                <li><a href="#" class="active">Email Writer</a></li>
-                <li><a href="#">Reply Email Writer</a></li>
+                <li><a href="#" onclick="showForm('subjectLineForm')">Subject Line Generator</a></li>
+                <li><a href="#" onclick="showForm('emailWriterForm')">Email Generator</a></li>
+                <li><a href="#" onclick="showForm('replyEmailForm')">Reply Email Generator</a></li>
             </ul>
         </aside>
+        <section class="form-section-container">
+            <!-- Subject Line Generator Form -->
+            <div class="form-section">
+            <div id="subjectLineForm" class="form-section-1">
+                <h2>Subject Line Generator</h2>
+                <hr class="divider">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="subject">Enter Content:</label>
+                        <textarea id="subject" name="subject" required cols="70" rows="10"></textarea>
+                    </div>
+                    <button type="submit">Generate Subject Line</button>
+                </form>
+            </div>
+            </div>
+            <!-- Email Writer Form -->
+            <div class="form-section">
+            <div id="emailWriterForm" class="form-section-2">
+                <h2>Email Generator</h2>
+                <hr class="divider">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="emailTopic">Email Topic:</label>
+                        <input type="text" id="emailTopic" name="emailBTopic" required style="width: 100%;">
+                        <label for="tone">Tone</label>
+                        <select id="tone" class="dropdown" style="width: 500px;"> <!-- Default Neutral option -->
+                            <option value="accusatory">Accusatory 👎</option>
+                            <option value="angry">Angry 😡</option>
+                            <option value="appreciative">Appreciative 🙌</option>
+                            <option value="assertive">Assertive ☝</option>
+                            <option value="concerned">Concerned 😟</option>
+                            <option value="confident">Confident 💪</option>
+                            <option value="cooperative">Cooperative 🤝</option>
+                            <option value="curious">Curious 🧐</option>
+                            <option value="disapproving">Disapproving 😠</option>
+                            <option value="disheartening">Disheartening 😞</option>
+                            <option value="egocentric">Egocentric 😤</option>
+                            <option value="empathetic">Empathetic 😌</option>
+                            <option value="encouraging">Encouraging 👍</option>
+                            <option value="enthusiastic">Enthusiastic 😃</option>
+                            <option values="excited">Excited 🤩</option>
+                            <option value="friendly">Friendly 😉</option>
+                            <option value="funny">Funny 😂</option>
+                            <option value="joyful">Joyful 😊</option>
+                            <option value="neutral" selected>Neutral 😐</option>
+                            <option value="optimistic">Optimistic ✌️</option>
+                            <option value="regertful">Regretful 😥</option>
+                            <option value="sad">Sad 🙁</option>
+                            <option value="serious">Serious 😐</option>
+                            <option value="surprised">Surprised 😮</option>
+                            <option value="unassuming">Unasumming  🙄</option>
+                            <option value="worried">Worried 😨</option>
+                        </select>
+                        <label for="writing-style" style="margin-top: 7px;">Writing style</label>
+                        <select id="writing-style" style="width: 500px;">
+                            <optgroup label="Default">
+                                <option value="casual">Casual</option>
+                                <option value="formal">Formal</option>
+                            </optgroup>
+                            <optgroup label="Expository">
+                                <option value="academic">Academic</option>
+                                <option value="business">Business</option>
+                                <option value="essay">Essay</option>
+                                <option value="how-to">How-to</option>
+                                <option value="instructions">Instructions</option>
+                                <option value="journalism">Journalism</option>
+                                <option value="legal">Legal</option>
+                            </optgroup>
+                            <optgroup label="Persuasive">
+                                <option value="advertising">Advertising</option>
+                                <option value="cover letter">Cover Letter</option>
+                                <option value="editorial">Editorial</option>
+                                <option value="letter of recommendation">Letter of Recommendation</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="opinion">Opinion</option>
+                                <option value="review">Review</option>
+                                <option value="sale">Sale</option>
+                            </optgroup>
+                        </select>
+                        <label for="name" style="margin-top: 7px;">Recipient:</label>
+                        <input type="text" id="name" class="name" style="width: 100%;">
+                        <label for="details">Details:</label>
+                        <input type="text" id="details" class="details" style="width: 100%;">
+                    </div>
+                    <button type="submit">Generate</button>
+                </form>
+            </div>
+            </div>
+            <!-- Reply Email Writer Form -->
+            <div class="form-section">
+            <div id="replyEmailForm" class="form-section-3">
+                <h2>Reply Email Writer</h2>
+                <hr class="divider">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="emailBody">Email body:</label>
+                        <textarea id="emailBody" name="emailBody" required cols="70" rows="10"></textarea>
+                        <label for="replytone">Tone</label>
+                        <select id="replytone" class="dropdown" style="width: 500px;"> <!-- Default Neutral option -->
+                            <option value="accusatory">Accusatory 👎</option>
+                            <option value="angry">Angry 😡</option>
+                            <option value="appreciative">Appreciative 🙌</option>
+                            <option value="assertive">Assertive ☝</option>
+                            <option value="concerned">Concerned 😟</option>
+                            <option value="confident">Confident 💪</option>
+                            <option value="cooperative">Cooperative 🤝</option>
+                            <option value="curious">Curious 🧐</option>
+                            <option value="disapproving">Disapproving 😠</option>
+                            <option value="disheartening">Disheartening 😞</option>
+                            <option value="egocentric">Egocentric 😤</option>
+                            <option value="empathetic">Empathetic 😌</option>
+                            <option value="encouraging">Encouraging 👍</option>
+                            <option value="enthusiastic">Enthusiastic 😃</option>
+                            <option values="excited">Excited 🤩</option>
+                            <option value="friendly">Friendly 😉</option>
+                            <option value="funny">Funny 😂</option>
+                            <option value="joyful">Joyful 😊</option>
+                            <option value="neutral" selected>Neutral 😐</option>
+                            <option value="optimistic">Optimistic ✌️</option>
+                            <option value="regertful">Regretful 😥</option>
+                            <option value="sad">Sad 🙁</option>
+                            <option value="serious">Serious 😐</option>
+                            <option value="surprised">Surprised 😮</option>
+                            <option value="unassuming">Unasumming  🙄</option>
+                            <option value="worried">Worried 😨</option>
+                        </select>
+                        <label for="replywriting-style" style="margin-top: 7px;">Writing style</label>
+                        <select id="replywriting-style" style="width: 500px;">
+                            <optgroup label="Default">
+                                <option value="casual">Casual</option>
+                                <option value="formal">Formal</option>
+                            </optgroup>
+                            <optgroup label="Expository">
+                                <option value="academic">Academic</option>
+                                <option value="business">Business</option>
+                                <option value="essay">Essay</option>
+                                <option value="how-to">How-to</option>
+                                <option value="instructions">Instructions</option>
+                                <option value="journalism">Journalism</option>
+                                <option value="legal">Legal</option>
+                            </optgroup>
+                            <optgroup label="Persuasive">
+                                <option value="advertising">Advertising</option>
+                                <option value="cover letter">Cover Letter</option>
+                                <option value="editorial">Editorial</option>
+                                <option value="letter of recommendation">Letter of Recommendation</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="opinion">Opinion</option>
+                                <option value="review">Review</option>
+                                <option value="sale">Sale</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <button type="submit">Generate</button>
+                </form>
+            </div>
+            </div>
+        </section>
     </main>
-
+    <div class="result" id="result">
+        <div style="display: flex;">
+            <h2>Your Suggest Email</h2>
+            <button>Copy</button>
+        </div>
+        <hr>
+    </div>
     <!-- Register Modal -->
     <div id="registerModal" class="modal">
         <div class="modal-content">
@@ -184,7 +383,48 @@
                 loginModal.style.display = "none";
             }
         }
-    </script>
+        function showForm(formId) {
+            // Hide all forms
+            var forms = document.querySelectorAll('.form-section > div'); // Selects all form sections
+            forms.forEach(function(form) {
+                form.classList.remove('active-form'); // Remove active class to hide
+            });
 
+            // Show the selected form
+            document.getElementById(formId).classList.add('active-form'); // Add active class to the selected form
+        }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#tone').select2({
+                placeholder: "Select a tone",
+                allowClear: true
+            });
+        });
+
+        $(document).ready(function() {
+            $('#writing-style').select2({
+                placeholder: "Select a writing style",  // Placeholder text
+                allowClear: true,  // Allow clear (reset)
+                width: 'resolve',  // Automatically adjusts the width to fit the container
+                theme: "default"   // You can change the theme if needed
+            });
+        });
+        $(document).ready(function() {
+            $('#replytone').select2({
+                placeholder: "Select a tone",
+                allowClear: true
+            });
+        });
+
+        $(document).ready(function() {
+            $('#replywriting-style').select2({
+                placeholder: "Select a writing style",  // Placeholder text
+                allowClear: true,  // Allow clear (reset)
+                width: 'resolve',  // Automatically adjusts the width to fit the container
+                theme: "default"   // You can change the theme if needed
+            });
+        });
+    </script>
 </body>
 </html>

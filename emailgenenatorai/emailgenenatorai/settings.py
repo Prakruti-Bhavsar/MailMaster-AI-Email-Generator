@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'email-generator-ai',
         'USER': 'root',
-        'PASSWORD': 'admin',
+        'PASSWORD': '123456',
         'HOST':'localhost',
         'PORT':'3306',
     }
