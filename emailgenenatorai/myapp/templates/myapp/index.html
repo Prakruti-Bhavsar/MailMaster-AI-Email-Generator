@@ -98,6 +98,16 @@
         .form-section > div.active-form {
             display: block; /* Show the active form */
         }
+
+        .result{
+            white-space: pre-wrap; /* Ensures the text wraps and respects line breaks */
+            word-wrap: break-word; 
+        }
+
+        .output{
+            white-space: pre-wrap; /* Ensures the text wraps and respects line breaks */
+            word-wrap: break-word; 
+        }
     </style>
     <style>
         .select2-container--default .select2-selection--single {
@@ -140,7 +150,7 @@
             <div id="subjectLineForm" class="form-section-1">
                 <h2>Subject Line Generator</h2>
                 <hr class="divider">
-                <form method="POST" action="">
+                <form method="POST" action="" id="subjectGeneratorForm">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="subject">Enter Content:</label>
@@ -155,11 +165,11 @@
             <div id="emailWriterForm" class="form-section-2">
                 <h2>Email Generator</h2>
                 <hr class="divider">
-                <form method="POST" action="">
+                <form method="POST" id="emailGeneratorForm">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="emailTopic">Email Topic:</label>
-                        <input type="text" id="emailTopic" name="emailBTopic" required style="width: 100%;">
+                        <input type="text" id="emailTopic" name="emailTopic" required style="width: 100%;">
                         <label for="tone">Tone</label>
                         <select id="tone" class="dropdown" style="width: 500px;"> <!-- Default Neutral option -->
                             <option value="accusatory">Accusatory 👎</option>
@@ -229,7 +239,7 @@
             <div id="replyEmailForm" class="form-section-3">
                 <h2>Reply Email Writer</h2>
                 <hr class="divider">
-                <form method="POST" action="">
+                <form method="POST" action="" id="replyemailGeneratorForm">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="emailBody">Email body:</label>
@@ -296,13 +306,16 @@
             </div>
         </section>
     </main>
-    <div class="result" id="result">
+    
+    <div class="result" id="result" style="display: none;">
         <div style="display: flex;">
             <h2>Your Suggest Email</h2>
             <button>Copy</button>
         </div>
         <hr>
+        <div class="output" id="output"></div>
     </div>
+
     <!-- Register Modal -->
     <div id="registerModal" class="modal">
         <div class="modal-content">
@@ -311,16 +324,16 @@
             <form method="POST" action="{% url 'register' %}">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
+                    <label for="username1">Username</label>
+                    <input type="text" id="username1" name="username1" required>
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <label for="password1">Password</label>
+                    <input type="password" id="password1" name="password1" required>
                 </div>
                 <button type="submit" class="register-btn">Register</button>
             </form>
@@ -332,15 +345,15 @@
         <div class="modal-content">
             <span class="close" id="closeModalBtn">&times;</span> <!-- Close Login Modal -->
             <h2>Login</h2>
-            <form method="POST" action="{% url 'login' %}">
+            <form  method="POST" action="{% url 'login' %}">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
+                    <label for="username2">Username</label>
+                    <input type="text" id="username2" name="username2" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <label for="password2">Password</label>
+                    <input type="password" id="password2" name="password2" required>
                 </div>
                 <button type="submit" class="login-btn">Login</button>
             </form>
@@ -385,12 +398,14 @@
         }
         function showForm(formId) {
             // Hide all forms
+            // window.location.href = "{% url 'index' %}"; 
             var forms = document.querySelectorAll('.form-section > div'); // Selects all form sections
             forms.forEach(function(form) {
                 form.classList.remove('active-form'); // Remove active class to hide
             });
-
+            document.getElementById('result').style.display = 'none';
             // Show the selected form
+
             document.getElementById(formId).classList.add('active-form'); // Add active class to the selected form
         }
     </script>
@@ -426,5 +441,108 @@
             });
         });
     </script>
+    <script>
+        // var data = JSON.parse("{{data|escapejs}}");
+        // var value = "response_text";  
+        // var res = data[value];
+        // if(res !== null){
+        //     displayResponse(res);
+        // }
+        // function displayResponse(response_text) {
+        //     const resultDiv = document.getElementById('result');
+        //     const outputDiv = document.getElementById('output');
+
+        //     // Check if response_text has a value
+        //     if (response_text && response_text.trim() !== '') {
+        //         // Set the content of the output div
+        //         outputDiv.textContent = response_text;
+
+        //         // Make the result div visible
+        //         resultDiv.style.display = 'block';
+        //     }
+        // }
+    </script>
+    <script>
+        document.getElementById('emailGeneratorForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+    
+            var xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest object
+            xhr.open('POST', '{% url "email-generation" %}', true); // Configure it
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            var csrfToken = "{{ csrf_token }}";
+            xhr.setRequestHeader("X-CSRFToken", csrfToken);
+    
+            // Prepare the data to be sent
+            var formData = new FormData(this);
+            var params = new URLSearchParams(formData).toString(); // Serialize the form data
+    
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) { // Request is complete
+                    if (xhr.status === 200) { // Success
+                        var response = JSON.parse(xhr.responseText); // Parse the JSON response
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('output').innerHTML = '<pre>'+response.response_text+'</pre>'; // Display generated email
+                    } 
+                }
+            };
+    
+            xhr.send(params); // Send the request with the serialized form data
+        });
+    </script>
+    <script>
+        document.getElementById('subjectGeneratorForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+    
+            var xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest object
+            xhr.open('POST', '{% url "subject-generation" %}', true); // Configure it
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            var csrfToken = "{{ csrf_token }}";
+            xhr.setRequestHeader("X-CSRFToken", csrfToken);
+    
+            // Prepare the data to be sent
+            var formData = new FormData(this);
+            var params = new URLSearchParams(formData).toString(); // Serialize the form data
+    
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) { // Request is complete
+                    if (xhr.status === 200) { // Success
+                        var response = JSON.parse(xhr.responseText); // Parse the JSON response
+                        document.getElementById('result').style.display = 'block';
+                        document.getElementById('output').innerHTML = response.response_text; // Display generated email
+                    } 
+                }
+            };
+    
+            xhr.send(params); // Send the request with the serialized form data
+        });
+    </script>
+        <script>
+            document.getElementById('replyemailGeneratorForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+        
+                var xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest object
+                xhr.open('POST', '{% url "reply-email-generation" %}', true); // Configure it
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                var csrfToken = "{{ csrf_token }}";
+                xhr.setRequestHeader("X-CSRFToken", csrfToken);
+        
+                // Prepare the data to be sent
+                var formData = new FormData(this);
+                var params = new URLSearchParams(formData).toString(); // Serialize the form data
+        
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) { // Request is complete
+                        if (xhr.status === 200) { // Success
+                            var response = JSON.parse(xhr.responseText); // Parse the JSON response
+                            document.getElementById('result').style.display = 'block';
+                            document.getElementById('output').innerHTML = response.response_text; // Display generated email
+                        } 
+                    }
+                };
+        
+                xhr.send(params); // Send the request with the serialized form data
+            });
+        </script>
+    
 </body>
 </html>

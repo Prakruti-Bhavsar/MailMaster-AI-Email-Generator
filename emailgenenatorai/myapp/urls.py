@@ -7,4 +7,8 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('email-generation/',views.generate_email, name='email-generation'),
+    path('subject-generation/',views.generate_subject, name='subject-generation'),
+    path('reply-email-generation/',views.generate_reply_email, name='reply-email-generation'),
+
 ]
